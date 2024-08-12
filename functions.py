@@ -4,6 +4,14 @@ from prettytable import PrettyTable
 import xml.etree.ElementTree as ET
 
 
+# ANSI escape codes for colors
+LIGHT_GREEN = "\033[92m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+RED = "\033[31m"
+RESET = "\033[0m"
+
+
 def get_ciphers_nmap(domain, port):
     """
     Run nmap to get the ciphers used in the domain and port
@@ -86,10 +94,6 @@ def tls_color(version):
     """
     Adds colors to output based on the TLS version
     """
-    RED = "\033[31m"
-    YELLOW = "\033[33m"
-    RESET = "\033[0m"
-
     if version < 1.1: # TODO nastavit správnou hodnotu
         return f"{RED}{str(version)}{RESET}"
     elif version < 1.2:
@@ -102,19 +106,13 @@ def security_color(word):
     Adds colors to output based on the security of the cipher
     Colors are coresponing to the security level on the web version of ciphersuite.info
     """
-    SECURE = "\033[92m"
-    RECCOMENDED = "\033[32m"
-    WEAK = "\033[33m"
-    INSECURE = "\033[31m"
-    RESET = "\033[0m"
-
     if word == "secure":
-        return f"{SECURE}{word}{RESET}"
+        return f"{LIGHT_GREEN}{word}{RESET}"
     elif word == "reccomended":
-        return f"{RECCOMENDED}{word}{RESET}"
+        return f"{GREEN}{word}{RESET}"
     elif word == "weak":
-        return f"{WEAK}{word}{RESET}"
+        return f"{YELLOW}{word}{RESET}"
     elif word == "insecure":
-        return f"{INSECURE}{word}{RESET}"
+        return f"{RED}{word}{RESET}"
     else:
         return word

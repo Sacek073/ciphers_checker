@@ -1,6 +1,7 @@
 import functions
 import argparse
 import signal
+import findings
 
 
 domain = ""
@@ -60,6 +61,12 @@ if __name__ == '__main__':
         stats[f"{cipher}"] = functions.get_stats(cipher).get(f"{cipher}")
 
     functions.print_table(stats)
+
+    findings.is_TLS_1(stats)
+
+    findings.supports_RC4(stats)
+
+    findings.supports_CBC(stats)
 
     if not file:
         functions.remove_tmp_file(domain, port)
