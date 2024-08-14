@@ -4,6 +4,7 @@ import signal
 import findings
 
 
+# Global variables used for removeing tmp file when SIGINT is received
 domain = ""
 port = 0
 
@@ -52,20 +53,23 @@ if __name__ == '__main__':
         output = functions.get_ciphers_nmap(domain, port)
         if verbose: # Prints nmap output
             print(output)
-        ciphers = functions.parse_ciphers(domain, port)
+        ciphers = functions.parse_ciphers(domain=domain, port=port)
     else:
-        ciphers = functions.parse_ciphers_file(file)
+        ciphers = functions.parse_ciphers(file=file)
 
     stats = {}
-    for cipher in ciphers:
-        stats[f"{cipher}"] = functions.get_stats(cipher).get(f"{cipher}")
+    for key, value in ciphers.items():
+        stats[key] = {"kex_info": value, "stats": functions.get_stats(key).get(key)}
 
     functions.print_table(stats)
 
     print("FOLLOWING SECTION COVERS FINDINGS FROM THE DATABASE:")
 
     findings.is_TLS_1(stats)
-
+    findings.no_forward_secrecy(stats)
+    findings.sweet_32(stats)
     findings.supports_RC4(stats)
-
     findings.supports_CBC(stats)
+
+    if not file:
+        functions.remove_tmp_file(domain, port)
