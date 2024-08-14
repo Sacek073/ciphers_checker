@@ -82,12 +82,31 @@ def supports_RC4(stats):
 
 @result_wrapper
 def weak_SSL(stats):
-    ...
+    print("TBD: Testing for weak SSL support:")
+    # TODO
+    return {"TBD": "TBD"}
 
 
 @result_wrapper
 def logjam(stats):
-    ...
+    print("Testing for Logjam vulnerability:")
+    result = {}
+    # Logjam ciphers use DHE with 1024 or 512 or 256 or 128 bits
+    # https://weakdh.org/
+    for key, value in stats.items():
+        value = value.get("kex_info")
+        if "dh " in value.lower():
+            value = value.split(" ")
+            bits = int(value[1])
+            if bits < 2048:
+                result[f"{RED}{key}{RESET}"] = "vulnerable to Logjam"
+            else:
+                result[f"{GREEN}{key}{RESET}"] = "not vulnerable to Logjam"
+        else:
+            result[f"{GREEN}{key}{RESET}"] = "not vulnerable to Logjam"
+    return result
+
+
 
 
 @result_wrapper

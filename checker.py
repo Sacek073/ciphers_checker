@@ -69,6 +69,8 @@ if __name__ == '__main__':
     findings.no_forward_secrecy(stats)
     findings.sweet_32(stats)
     findings.supports_RC4(stats)
+    findings.weak_SSL(stats)
+    findings.logjam(stats)
     findings.supports_CBC(stats)
 
     if not file:
