@@ -62,11 +62,10 @@ if __name__ == '__main__':
 
     functions.print_table(stats)
 
+    print("FOLLOWING SECTION COVERS FINDINGS FROM THE DATABASE:")
+
     findings.is_TLS_1(stats)
 
     findings.supports_RC4(stats)
 
     findings.supports_CBC(stats)
-
-    if not file:
-        functions.remove_tmp_file(domain, port)

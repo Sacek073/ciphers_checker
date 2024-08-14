@@ -36,6 +36,8 @@ def parse_ciphers(domain, port):
         for cipher in table.findall(".//elem[@key='name']"):
             ciphers.append(cipher.text)
 
+    remove_tmp_file(domain, port)
+
     return ciphers
 
 
@@ -45,6 +47,8 @@ def parse_ciphers_file(file):
     """
     with open(file, "r") as f:
         ciphers = [line.strip() for line in f.readlines()]
+
+    remove_tmp_file(file)
 
     return ciphers
 
@@ -78,6 +82,7 @@ def print_table(results):
     """
     Function prints the results in a table
     """
+    print("Overview of the used ciphers (ciphersuite.info):")
     table = PrettyTable()
     table.field_names = ["Cipher", "Security", "TLS", "URL"]
     for key, value in results.items():
