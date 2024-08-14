@@ -1,7 +1,7 @@
-import functions
 import argparse
 import signal
 import findings
+import functions
 
 
 # Global variables used for removing tmp file when SIGINT is received
@@ -55,6 +55,7 @@ if __name__ == '__main__':
             print(output)
         ciphers = functions.parse_ciphers(domain=domain, port=port)
     else:
+        print(f"Reading ciphers from file: {file}")
         ciphers = functions.parse_ciphers(file=file)
 
     stats = {}
