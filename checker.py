@@ -2,6 +2,7 @@ import argparse
 import signal
 import findings
 import functions
+from ansicolors import *
 
 
 # Global variables used for removing tmp file when SIGINT is received
@@ -60,7 +61,10 @@ if __name__ == '__main__':
 
     stats = {}
     for key, value in ciphers.items():
-        stats[key] = {"kex_info": value, "stats": functions.get_stats(key).get(key)}
+        try:
+            stats[key] = {"kex_info": value, "stats": functions.get_stats(key).get(key)}
+        except:
+            print(f"{YELLOW}Error getting stats for {key}{RESET}")
 
     functions.print_table(stats)
 
