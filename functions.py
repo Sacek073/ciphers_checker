@@ -116,7 +116,7 @@ def security_color(word):
     """
     if word == "secure":
         return f"{LIGHT_GREEN}{word}{RESET}"
-    elif word == "reccomended":
+    elif word == "recommended":
         return f"{GREEN}{word}{RESET}"
     elif word == "weak":
         return f"{YELLOW}{word}{RESET}"
