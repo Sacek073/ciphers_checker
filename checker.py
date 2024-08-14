@@ -4,7 +4,7 @@ import signal
 import findings
 
 
-# Global variables used for removeing tmp file when SIGINT is received
+# Global variables used for removing tmp file when SIGINT is received
 domain = ""
 port = 0
 
