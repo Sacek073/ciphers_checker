@@ -64,6 +64,7 @@ if __name__ == '__main__':
         try:
             stats[key] = {"kex_info": value, "stats": functions.get_stats(key).get(key)}
         except:
+            # If the error occurs here, it is probably because the cipher is not found in the ciphersuite.info
             print(f"{YELLOW}Error getting stats for {key}{RESET}")
 
     functions.print_table(stats)

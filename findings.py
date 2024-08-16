@@ -79,6 +79,41 @@ def supports_RC4(stats):
 def weak_SSL(stats):
     print("TBD: Testing for weak SSL support:")
     # TODO
+    # Asi udělat jako volitelný test, resp vynechat ho, pokud se bude volat se souborem (-f)
+    # A nebo to předělat na vstup ze sslscanu celé
+
+    # Tests according to https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security
+
+    # Test SSLv2 (DROWN)
+    # sslscan --ssl2 <host>
+
+    # Test SSLv3 (POODLE)
+    # sslscan --ssl3 <host>
+
+    # TLSv1.0 is tested in separate test
+
+    # Test EXPORT ciphers suites (FREAK)
+    # if "EXPORT" in cipher:
+    # nebo:
+    # openssl s_client -connect example.com:443 -cipher EXPORT
+
+    # Test NULL ciphers
+    # if "NULL" in cipher:
+
+    # Test anonymous ciphers
+    # if "anon" in cipher:
+
+    # RC4 is tested in separate test
+
+    # CBC is tested in separate test
+
+    # Test TLS compression (CRIME)
+    # sslscan output:
+    # TLS Compression:
+    # OpenSSL version does not support compression
+
+    # Logjam is tested in separate test
+
     return {"TBD": "TBD"}
 
 
