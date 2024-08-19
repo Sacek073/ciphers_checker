@@ -145,6 +145,20 @@ def supports_CBC(stats):
     return result
 
 
+def tls_compression(domain=None, port=None, file=None):
+    print("Testing for TLS Compression:")
+    root = functions.get_xml_root(domain, port, file)
+    tables = root.findall(".//table")
+    for table in tables:
+        if "TLS" in str(table.get("key")):
+            try:
+                compressor = table.find("table[@key='compressors']")
+                for comp in compressor.findall("elem"):
+                    print(f"{table.get('key')} compression: {f'{GREEN}NULL{RESET}' if comp.text == 'NULL' else f'{RED}{comp.text}{RESET}'}")
+            except:
+                pass
+
+
 def sslscan_findings(domain=None, port=None):
     if domain and port:
         tree = ET.parse(f"tmp_sslscan_{domain}_{port}.xml")
@@ -158,10 +172,3 @@ def sslscan_findings(domain=None, port=None):
     ssls = root.findall(".//protocol[@type='ssl']")
     for ssl in ssls:
         print(f"SSLv{ssl.get('version')} is {f'{RED}enabled{RESET}' if ssl.get('enabled') == 1 else f'{GREEN}disabled{RESET}'}")
-
-    # TLS Compression
-    tls_compression = root.findall(".//compression")
-    if len(tls_compression) == 0:
-        print(f"{RED}TLS Compression information cannot be fetched, probably error in sslscan, check the output manually.{RESET}")
-    for compression in tls_compression:
-        print(f"TLS Compression is {f'{RED}supported{RESET}' if compression.get('supported') == 1 else f'{GREEN}not supported{RESET}'}")

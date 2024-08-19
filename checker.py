@@ -89,8 +89,13 @@ if __name__ == '__main__':
     findings.null_ciphers(stats)
     findings.anon_ciphers(stats)
 
+    if not file:
+        findings.tls_compression(domain=domain, port=port)
+    else:
+        findings.tls_compression(file=file)
+
     try:
-        print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW}, {RED}SSLv3{YELLOW} AND {RED}TLS COMPRESSION{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
+        print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW} AND {RED}SSLv3{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
         sslscan_output = functions.get_results_sslscan(domain, port)
         if verbose:
             print(sslscan_output)
@@ -100,8 +105,6 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(f"{RED}Error getting SSLSCAN info: {e}{RESET}")
-        functions.remove_tmp_files(domain, port)
-        exit(1)
 
     if not file:
         functions.remove_tmp_files(domain, port)
