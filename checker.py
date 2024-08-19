@@ -32,7 +32,7 @@ def arguments():
 def signal_handler(sig, frame):
     print("Ctrl-C pressed. Exiting...")
     try:
-        functions.remove_tmp_file(domain, port)
+        functions.remove_tmp_files(domain, port)
     except:
         pass
     exit(0)
@@ -51,10 +51,14 @@ if __name__ == '__main__':
     file = args.file
 
     if not file:
-        output = functions.get_ciphers_nmap(domain, port)
+        output_nmap = functions.get_ciphers_nmap(domain, port)
         if verbose: # Prints nmap output
-            print(output)
+            print(output_nmap)
+            print(70*"#")
+
+
         ciphers = functions.parse_ciphers(domain=domain, port=port)
+
     else:
         print(f"Reading ciphers from file: {file}")
         ciphers = functions.parse_ciphers(file=file)
@@ -75,9 +79,29 @@ if __name__ == '__main__':
     findings.no_forward_secrecy(stats)
     findings.sweet_32(stats)
     findings.supports_RC4(stats)
-    findings.weak_SSL(stats)
     findings.logjam(stats)
     findings.supports_CBC(stats)
 
+    print(70*"#")
+    print("Following sections covers WEAK SSL FINDING from databse:")
+
+    findings.export_ciphers(stats)
+    findings.null_ciphers(stats)
+    findings.anon_ciphers(stats)
+
+    try:
+        print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW}, {RED}SSLv3{YELLOW} AND {RED}TLS COMPRESSION{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
+        sslscan_output = functions.get_results_sslscan(domain, port)
+        if verbose:
+            print(sslscan_output)
+            print(70*"#")
+
+        findings.sslscan_findings(domain, port)
+
+    except Exception as e:
+        print(f"{RED}Error getting SSLSCAN info: {e}{RESET}")
+        functions.remove_tmp_files(domain, port)
+        exit(1)
+
     if not file:
-        functions.remove_tmp_file(domain, port)
+        functions.remove_tmp_files(domain, port)

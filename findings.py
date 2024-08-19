@@ -1,5 +1,7 @@
 from prettytable import PrettyTable
 from ansicolors import *
+import xml.etree.ElementTree as ET
+import functions
 
 
 def result_wrapper(func):
@@ -41,7 +43,7 @@ def no_forward_secrecy(stats):
     result = {}
     # PFS ciphers use DHE or ECDHE or EDH
     for key in stats:
-        if "ECDHE" in key or "DHE" in key or "EDH" in key:
+        if "ECDHE" in key.upper() or "DHE" in key.upper() or "EDH" in key.upper():
             result[f"{GREEN}{key}{RESET}"] = "supports forward secrecy"
         else:
             result[f"{RED}{key}{RESET}"] = "does not support forward secrecy"
@@ -56,7 +58,7 @@ def sweet_32(stats):
     # https://sweet32.info
     # But also DES and IDEA use 64 bit block size
     for key in stats:
-        if "3DES" in key or "BLOWFISH" in key or "DES" in key or "IDEA" in key:
+        if "3DES" in key.upper() or "BLOWFISH" in key.upper() or "DES" in key.upper() or "IDEA" in key.upper():
             result[f"{RED}{key}{RESET}"] = "vulnerable to SWEET32"
         else:
             result[f"{GREEN}{key}{RESET}"] = "not vulnerable to SWEET32"
@@ -68,7 +70,7 @@ def supports_RC4(stats):
     print("Testing for RC4 support:")
     result = {}
     for key in stats:
-        if "RC4" in key:
+        if "RC4" in key.upper():
             result[f"{RED}{key}{RESET}"] = "supports RC4"
         else:
             result[f"{GREEN}{key}{RESET}"] = "does not support RC4"
@@ -76,45 +78,39 @@ def supports_RC4(stats):
 
 
 @result_wrapper
-def weak_SSL(stats):
-    print("TBD: Testing for weak SSL support:")
-    # TODO
-    # Asi udělat jako volitelný test, resp vynechat ho, pokud se bude volat se souborem (-f)
-    # A nebo to předělat na vstup ze sslscanu celé
+def export_ciphers(stats):
+    print("Testing for EXPORT ciphers:")
+    result = {}
+    for key in stats:
+        if "EXPORT" in key.upper():
+            result[f"{RED}{key}{RESET}"] = "is EXPORT cipher"
+        else:
+            result[f"{GREEN}{key}{RESET}"] = "is not EXPORT cipher"
+    return result
 
-    # Tests according to https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/09-Testing_for_Weak_Cryptography/01-Testing_for_Weak_Transport_Layer_Security
 
-    # Test SSLv2 (DROWN)
-    # sslscan --ssl2 <host>
+@result_wrapper
+def null_ciphers(stats):
+    print("Testing for NULL ciphers:")
+    result = {}
+    for key in stats:
+        if "NULL" in key.upper():
+            result[f"{RED}{key}{RESET}"] = "is NULL cipher"
+        else:
+            result[f"{GREEN}{key}{RESET}"] = "is not NULL cipher"
+    return result
 
-    # Test SSLv3 (POODLE)
-    # sslscan --ssl3 <host>
 
-    # TLSv1.0 is tested in separate test
-
-    # Test EXPORT ciphers suites (FREAK)
-    # if "EXPORT" in cipher:
-    # nebo:
-    # openssl s_client -connect example.com:443 -cipher EXPORT
-
-    # Test NULL ciphers
-    # if "NULL" in cipher:
-
-    # Test anonymous ciphers
-    # if "anon" in cipher:
-
-    # RC4 is tested in separate test
-
-    # CBC is tested in separate test
-
-    # Test TLS compression (CRIME)
-    # sslscan output:
-    # TLS Compression:
-    # OpenSSL version does not support compression
-
-    # Logjam is tested in separate test
-
-    return {"TBD": "TBD"}
+@result_wrapper
+def anon_ciphers(stats):
+    print("Testing for anonymous ciphers:")
+    result = {}
+    for key in stats:
+        if "anon" in key.lower():
+            result[f"{RED}{key}{RESET}"] = "is anonymous cipher"
+        else:
+            result[f"{GREEN}{key}{RESET}"] = "is not anonymous cipher"
+    return result
 
 
 @result_wrapper
@@ -137,15 +133,35 @@ def logjam(stats):
     return result
 
 
-
-
 @result_wrapper
 def supports_CBC(stats):
     print("Testing for CBC support:")
     result = {}
     for key in stats:
-        if "CBC" in key:
+        if "CBC" in key.upper():
             result[f"{RED}{key}{RESET}"] = "supports CBC"
         else:
             result[f"{GREEN}{key}{RESET}"] = "does not support CBC"
     return result
+
+
+def sslscan_findings(domain=None, port=None):
+    if domain and port:
+        tree = ET.parse(f"tmp_sslscan_{domain}_{port}.xml")
+    else:
+        print("No file or domain and port specified in function parse_ciphers, exitting...")
+        functions.remove_tmp_files(domain, port)
+        exit(1)
+
+    root = tree.getroot()
+    # SSLv2 anf SSLv3
+    ssls = root.findall(".//protocol[@type='ssl']")
+    for ssl in ssls:
+        print(f"SSLv{ssl.get('version')} is {f'{RED}enabled{RESET}' if ssl.get('enabled') == 1 else f'{GREEN}disabled{RESET}'}")
+
+    # TLS Compression
+    tls_compression = root.findall(".//compression")
+    if len(tls_compression) == 0:
+        print(f"{RED}TLS Compression information cannot be fetched, probably error in sslscan, check the output manually.{RESET}")
+    for compression in tls_compression:
+        print(f"TLS Compression is {f'{RED}supported{RESET}' if compression.get('supported') == 1 else f'{GREEN}not supported{RESET}'}")

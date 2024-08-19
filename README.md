@@ -6,18 +6,21 @@ This repository contains script for checking the strength of the ciphers used.
 * Custom checks are also implemented.
 
 ## Dependecies
-In order to run this script it is necessary to have installed nmap and python3.
+In order to run this script it is necessary to have installed *nmap* and *python3*, optionally for testing SSLv2, SSLv3 and TLS Compression *sslscan* is used.
 * https://nmap.org/
 * https://www.python.org/downloads/
+* https://github.com/rbsec/sslscan
 
 The script runs both on Linux and Windows, it suposses that nmap is in PATH, so the nmap command is executed without specific path as:
 
 ```
-functions.py line 21:
+functions.py line 19:
 cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers {domain}"
 ```
 
 In case that nmap is not in PATH, the script will probably fail. In that case you can modify the line above and specify the path to nmap.
+
+If you wish to use sslscan, you need to configure the path of the sslscan in the functions.py file on line 9.
 
 Before running the script, it is necessary to install the required python packages. This can be done by running the following command:
 
@@ -29,8 +32,8 @@ The script uses ANSI escape codes for coloring the output. It is possible to exp
 
 ## Usage
 This scripts offers two modes of operation:
-1) Live nmap scan + ciphersuite.info check
-2) Input file with nmap scan results + ciphersuite.info check
+1) Live nmap scan + ciphersuite.info check + sslscan check (if installed)
+2) Input file with nmap scan results + ciphersuite.info check + sslscan check (if installed)
 
 For both of these modes the script needs internet connectivity to fetch the data about ciphers used from ciphersuite.info.
 
