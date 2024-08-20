@@ -95,6 +95,7 @@ if __name__ == '__main__':
         findings.tls_compression(file=file)
 
     try:
+        print(70*"#")
         print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW} AND {RED}SSLv3{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
         sslscan_output = functions.get_results_sslscan(domain, port)
         if verbose:
@@ -105,6 +106,10 @@ if __name__ == '__main__':
 
     except Exception as e:
         print(f"{RED}Error getting SSLSCAN info: {e}{RESET}")
+
+    # TODO File
+    print(70*"#")
+    findings.certificate_test(domain, port)
 
     if not file:
         functions.remove_tmp_files(domain, port)

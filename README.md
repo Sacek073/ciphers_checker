@@ -15,7 +15,7 @@ The script runs both on Linux and Windows, it suposses that nmap is in PATH, so 
 
 ```
 functions.py line 19:
-cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers {domain}"
+cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers,ssl-cert {domain}"
 ```
 
 In case that nmap is not in PATH, the script will probably fail. In that case you can modify the line above and specify the path to nmap.
@@ -48,7 +48,7 @@ python3 checker.py -d www.example.com -p 443
 To run the script in this mode, you need to specify the input file. The input file needs to be xml output from the nmap scan, which you can obtain by running the following command:
 
 ```
-nmap -oX output.xml -p 443 -Pn --script ssl-enum-ciphers www.example.com
+nmap -oX output.xml -p 443 -Pn --script ssl-enum-ciphers,ssl-cert www.example.com
 ```
 
 Then the usage of the script is as follows:

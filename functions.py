@@ -16,7 +16,7 @@ def get_ciphers_nmap(domain, port):
     Run nmap to get the ciphers used in the domain and port
     Output is saved in a file tmp_{domain}_{port}.xml and also returned as a string
     """
-    cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers {domain}"
+    cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers,ssl-cert {domain}"
     print(f"Running nmap for host: {domain} on port: {port}")
     output = subprocess.check_output(cmd, shell=True, universal_newlines=True)
     return output

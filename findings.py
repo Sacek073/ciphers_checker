@@ -172,3 +172,23 @@ def sslscan_findings(domain=None, port=None):
     ssls = root.findall(".//protocol[@type='ssl']")
     for ssl in ssls:
         print(f"SSLv{ssl.get('version')} is {f'{RED}enabled{RESET}' if ssl.get('enabled') == 1 else f'{GREEN}disabled{RESET}'}")
+
+
+def certificate_test(domain=None, port=None, file=None):
+    root = functions.get_xml_root(domain, port, file)
+    cert = root.find(".//script[@id='ssl-cert']")
+
+    print("Testing for wildcard in the certificate:")
+    subject_common_name = cert.find("table[@key='subject']").find("elem[@key='commonName']").text
+    if "*" in subject_common_name:
+        print(f"Certificate has wildcard: {RED}{subject_common_name}{RESET}")
+    else:
+        print(f"Certificate has no wildcard: {GREEN}{subject_common_name}{RESET}")
+
+    print(70*"#")
+    print("Testing for SHA1 signing algorithm:")
+    sig_algo = cert.find("elem[@key='sig_algo']").text
+    if "sha1" in sig_algo.lower():
+        print(f"Certificate is signed with SHA1: {RED}{sig_algo}{RESET}")
+    else:
+        print(f"Certificate is not signed with SHA1: {GREEN}{sig_algo}{RESET}")
