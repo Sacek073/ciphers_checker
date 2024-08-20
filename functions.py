@@ -142,7 +142,7 @@ def get_xml_root(domain=None, port=None, file=None):
     elif domain and port:
         tree = ET.parse(f"tmp_{domain}_{port}.xml")
     else:
-        print("No file or domain and port specified in function parse_ciphers, exitting...")
+        print("No file or domain and port specified for openig xml file, exitting...")
         exit(1)
 
     return tree.getroot()

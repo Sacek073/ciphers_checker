@@ -163,9 +163,8 @@ def sslscan_findings(domain=None, port=None):
     if domain and port:
         tree = ET.parse(f"tmp_sslscan_{domain}_{port}.xml")
     else:
-        print("No file or domain and port specified in function parse_ciphers, exitting...")
-        functions.remove_tmp_files(domain, port)
-        exit(1)
+        print(f"No domain and port provided in sslscan_findings, test will be skipped")
+        return
 
     root = tree.getroot()
     # SSLv2 anf SSLv3

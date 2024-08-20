@@ -94,22 +94,29 @@ if __name__ == '__main__':
     else:
         findings.tls_compression(file=file)
 
-    try:
-        print(70*"#")
-        print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW} AND {RED}SSLv3{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
-        sslscan_output = functions.get_results_sslscan(domain, port)
-        if verbose:
-            print(sslscan_output)
+    if not file:
+        try:
             print(70*"#")
+            print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW} AND {RED}SSLv3{YELLOW}, THE SSLSCAN TOOL IS NECESSARY.\nPLEASE CONFIGURE IT'S PATH IN THE FILE functions.py on line 9.{RESET}")
+            sslscan_output = functions.get_results_sslscan(domain, port)
+            if verbose:
+                print(sslscan_output)
+                print(70*"#")
 
-        findings.sslscan_findings(domain, port)
+            findings.sslscan_findings(domain, port)
 
-    except Exception as e:
-        print(f"{RED}Error getting SSLSCAN info: {e}{RESET}")
+        except Exception as e:
+            print(f"{RED}Error getting SSLSCAN info: {e}{RESET}")
+    else:
+        print(70*"#")
+        print(f"{YELLOW}NOTE: FOR THE TESTING OF {RED}SSLv2{YELLOW} AND {RED}SSLv3{YELLOW}, THE SSLSCAN LIVE SCAN IS NECESSARY, WHICH IS UNAVAILABLE WITH THE FILE OPTION (-f). THIS TEST WILL BE SKIPPED.{RESET}")
 
-    # TODO File
     print(70*"#")
-    findings.certificate_test(domain, port)
+    if not file:
+        findings.certificate_test(domain=domain, port=port)
+    else:
+        findings.certificate_test(file=file)
+
 
     if not file:
         functions.remove_tmp_files(domain, port)
