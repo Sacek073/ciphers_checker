@@ -1,5 +1,5 @@
 # Ciphers checker
-This repository contains script for checking the strength of the ciphers used.
+This repository contains script for checking the strength of the ciphers used. Additionaly 2 tests of the certificate are included.
 
 * For enumeration of the ciphers the nmap script ssl-enum-ciphers is used.
 * For verification of the strength the [ciphersuite.info](https://ciphersuite.info/) is used.
@@ -20,7 +20,7 @@ cmd = f"nmap -oX tmp_{domain}_{port}.xml -p {port} -Pn --script ssl-enum-ciphers
 
 In case that nmap is not in PATH, the script will probably fail. In that case you can modify the line above and specify the path to nmap.
 
-If you wish to use sslscan, you need to configure the path of the sslscan in the functions.py file on line 9.
+**If you wish to use sslscan for testing SSLv2 and SSLv3, you need to configure the path of the sslscan in the functions.py file on line 9.**
 
 Before running the script, it is necessary to install the required python packages. This can be done by running the following command:
 
