@@ -37,11 +37,9 @@ def parse_ciphers(domain=None, port=None, file=None):
     """
     root = get_xml_root(domain, port, file)
     ciphers_table = root.findall(".//table[@key='ciphers']")
+    nmap_output = root.find(".//script[@id='ssl-enum-ciphers']").get("output")
 
     ciphers = {}
-    # for table in ciphers_table:
-    #     for cipher in table.findall(".//elem[@key='name']"):
-    #         ciphers.append(cipher.text)
 
     for table in ciphers_table:
         cipher_name = None
@@ -54,10 +52,19 @@ def parse_ciphers(domain=None, port=None, file=None):
                 elif elem.get("key") == "kex_info":
                     kex_info = elem.text
                 if cipher_name and kex_info:
-                    ciphers[cipher_name] = kex_info
+                    ciphers[cipher_name] = [kex_info]
             except:
                 # Element is not cipher
                 pass
+
+    nmap_output = nmap_output.split("\n")
+    current_TLS = None
+    for line in nmap_output:
+        if "TLSv" in line:
+            current_TLS = line.strip()[:-1]
+        if "TLS_" in line:
+            cipher = line.strip().split(" ")[0]
+            ciphers[cipher].append(current_TLS)
 
     return ciphers
 
@@ -98,10 +105,10 @@ def print_table(results):
     table = PrettyTable()
     table.field_names = ["Cipher", "Security", "TLS", "URL"]
     for key, value in results.items():
-        value = value.get("stats")
-        tls_versions = [tls_color(float(tls[3:])) for tls in value.get('tls_version')]
+        stats = value.get("stats")
+        tls_versions = [tls_color(float(tls[4:])) for tls in value.get('tls')]
 
-        table.add_row([key, security_color(value.get('security')), ",".join(tls_versions), f"https://ciphersuite.info/cs/{key}"])
+        table.add_row([key, security_color(stats.get('security')), ",".join(tls_versions), f"https://ciphersuite.info/cs/{key}"])
 
     table.align["Cipher"] = "l"
     table.align["URL"] = "l"

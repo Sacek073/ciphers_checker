@@ -28,9 +28,8 @@ def is_TLS_1(stats):
     print("Testing for TLS 1.0 support:")
     result = {}
     for key, value in stats.items():
-        value = value.get("stats")
-        tls_versions = value.get('tls_version')
-        if "TLS1.0" in tls_versions:
+        tls_versions = value.get('tls')
+        if "TLSv1.0" in tls_versions:
             result[f"{RED}{key}{RESET}"] = "supports TLS 1.0"
         else:
             result[f"{GREEN}{key}{RESET}"] = "does not support TLS 1.0"
