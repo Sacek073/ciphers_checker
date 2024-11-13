@@ -14,7 +14,7 @@ def arguments():
     parser = argparse.ArgumentParser(description="Check the strength of the ciphers used in app. To use this script, specify the input file, or specify the domain and port to check")
     parser.add_argument("-d", "--domain", help="Domain to check", type=str)
     parser.add_argument("-p", "--port", help="Port to check", type=int)
-    parser.add_argument("-f", "--file", help="Input file with ciphers separated by newline, if this argument is present, domain and port is ignored", type=str)
+    parser.add_argument("-f", "--file", help="The input file needs to be xml output from the nmap scan, which you can obtain by running the following command: nmap -oX output.xml -p 443 -Pn --script ssl-enum-ciphers,ssl-cert www.example.com", type=str)
     parser.add_argument("-v", "--verbose", help="Increase output verbosity", action="store_true")
     args = parser.parse_args()
 
