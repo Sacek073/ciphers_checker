@@ -80,11 +80,19 @@ def remove_tmp_files(domain, port):
         pass
 
 
+def remove_ake_with(string):
+    if "_AKE_WITH_" in string:
+        return string.replace("_AKE_WITH_", "_")
+    else:
+        return string
+
+
 def get_stats(cipher):
     """
     Function returns the stats of a cipher, using the ciphersuite.info API
     """
-    url = f"https://ciphersuite.info/api/cs/{cipher}"
+    # TLS 1.3 ciphers have different naming convention in ciphersuite.info
+    url = f"https://ciphersuite.info/api/cs/{remove_ake_with(cipher)}"
 
     payload = {}
     headers = {
@@ -93,6 +101,8 @@ def get_stats(cipher):
 
     response = requests.request("GET", url, headers=headers, data=payload)
     data = response.json()
+    # If the naming convention was changed, we need to change it back
+    data[cipher] = data.pop(remove_ake_with(cipher))
 
     return data
 
@@ -108,7 +118,8 @@ def print_table(results):
         stats = value.get("stats")
         tls_versions = [tls_color(float(tls[4:])) for tls in value.get('tls')]
 
-        table.add_row([key, security_color(stats.get('security')), ",".join(tls_versions), f"https://ciphersuite.info/cs/{key}"])
+        # We need to nemove the _AKE_WITH_ from the cipher name in orde to have functional URL
+        table.add_row([key, security_color(stats.get('security')), ",".join(tls_versions), f"https://ciphersuite.info/cs/{remove_ake_with(key)}"])
 
     table.align["Cipher"] = "l"
     table.align["URL"] = "l"

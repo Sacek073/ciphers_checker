@@ -42,7 +42,7 @@ def no_forward_secrecy(stats):
     result = {}
     # PFS ciphers use DHE or ECDHE or EDH
     for key in stats:
-        if "ECDHE" in key.upper() or "DHE" in key.upper() or "EDH" in key.upper():
+        if "ECDHE" in key.upper() or "DHE" in key.upper() or "EDH" in key.upper() or "AKE_WITH" in key.upper():
             result[f"{GREEN}{key}{RESET}"] = "supports forward secrecy"
         else:
             result[f"{RED}{key}{RESET}"] = "does not support forward secrecy"
