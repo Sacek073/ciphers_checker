@@ -57,12 +57,17 @@ def parse_ciphers(domain=None, port=None, file=None):
                 # Element is not cipher
                 pass
 
+    # Adding TLS version info to each cipher
     nmap_output = nmap_output.split("\n")
     current_TLS = None
     for line in nmap_output:
         if "TLSv" in line:
+            # First get the TLS version from the file
+            # Versions are sequential and each version is followed by the ciphers that support that version
             current_TLS = line.strip()[:-1]
         if "TLS_" in line:
+            # If this condition is met, the current line represents info about particular cipher
+            # We know, in which TLS version we are, so we simply add the version in the ciphers dictionary
             cipher = line.strip().split(" ")[0]
             ciphers[cipher].append(current_TLS)
 
