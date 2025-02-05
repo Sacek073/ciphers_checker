@@ -124,7 +124,7 @@ def logjam(stats):
             value = value.split(" ")
             bits = int(value[1])
             if bits < 2048:
-                result[f"{RED}{key}{RESET}"] = "vulnerable to Logjam"
+                result[f"{RED}{key}{RESET}"] = f"vulnerable to Logjam, kex: {value[1]}"
             else:
                 result[f"{GREEN}{key}{RESET}"] = "not vulnerable to Logjam"
         else:
