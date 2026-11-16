@@ -33,11 +33,11 @@ The script uses ANSI escape codes for coloring the output. It is possible to exp
 ## Usage
 This scripts offers two modes of operation:
 1) Live nmap scan + ciphersuite.info check + sslscan check (if installed)
-2) Input file with nmap scan results + ciphersuite.info check + sslscan check (if installed)
+2) Input file with nmap scan results + ciphersuite.info check
 
 For both of these modes the script needs internet connectivity to fetch the data about ciphers used from ciphersuite.info.
 
-### Live nmap scan + ciphersuite.info check
+### Live nmap scan + ciphersuite.info check + sslscan check (if installed)
 To run the script in this mode, you need to specify the domain and the port to scan.
 
 ```
